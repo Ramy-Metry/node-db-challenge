@@ -13,22 +13,24 @@ async function addTask(Task) {
 	return db('Tasks as t').where('t.id', id).first();
 }
 
-function findProjects() {
-	return db('Projects').select('*');
+async function findProjects() {
+	return await db('Projects as p').select('p.*');
 }
 
 function findResources() {
 	return db('Resources').select('*');
 }
 function findTasks() {
-	return db('tasks as t ').join('projects as p','p.id','t.project_id').select('t.*','p.name as project_name','p.description as project_description');
+	return db('tasks as t ')
+		.join('projects as p', 'p.id', 't.project_id')
+		.select('t.*', 'p.name as project_name', 'p.description as project_description');
 }
 
-module.exports={
-    addProject,
-    addResource,
-    addTask,
-    findProjects,
-    findResources,
-    findTasks
-}
+module.exports = {
+	addProject,
+	addResource,
+	addTask,
+	findProjects,
+	findResources,
+	findTasks
+};

@@ -1,11 +1,11 @@
-const db=require('../data/knexConfig')
-const projectsDb=require('./projectsModule')
+const db = require('../data/knexConfig');
+const projectsDb = require('./projectsModule');
 const express = require('express');
 const router = express();
 
-router.get('/projects', async (req, res) => {
+router.get('/projects/', async (req, res) => {
 	try {
-		const projects = await projectsDb.findProjects()
+		const projects = await projectsDb.findProjects();
 		res.json(projects);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
@@ -13,48 +13,60 @@ router.get('/projects', async (req, res) => {
 });
 router.post('/projects/', async (req, res) => {
 	try {
-		const project = await projectsDb.addProject(req.body)
+		const project = await projectsDb.addProject(newProject);
 		res.json(project);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
-})
+});
 
 router.get('/resources', async (req, res) => {
 	try {
-		const resources = await projectsDb.findResources()
+		const resources = await projectsDb.findResources();
 		res.json(resources);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
 });
-router.post('/resources/', async (req, res) => {
+
+router.post('/projects/:id/resources', async (req, res) => {
 	try {
-		const Resource = await projectsDb.addResource(req.body)
-		res.json(Resource);
+		const data = {
+			...req.body,
+			project_id: req.params.id
+		};
+		const addedResources = await db('Resources as r').insert(data).where('r.project_id', req.params.id);
+		const resourceId = await (await db('resources')).length;
+		const newRP = { project_id: req.params.id, resource_id: resourceId };
+		await db('P_R').insert(newRP);
+		res.json(addedResources);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
-})
+});
 
 router.get('/tasks', async (req, res) => {
 	try {
-		const Tasks = await projectsDb.findTasks()
+		const Tasks = await projectsDb.findTasks();
 		res.json(Tasks);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
 });
 
-router.post('/tasks/', async (req, res) => {
+router.post('/projects/:id/tasks', async (req, res) => {
 	try {
-		const Task = await projectsDb.addTask(req.body)
-		res.json(Task);
+		const data = {
+			...req.body,
+			project_id: req.params.id
+		};
+		const addedTasks = await db('Tasks as t').insert(data).where('t.project_id', req.params.id);
+		res.json(addedTasks);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
-})
+});
 
 
 
-module.exports=router;
+module.exports = router;
