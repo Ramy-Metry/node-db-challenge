@@ -6,7 +6,13 @@ const router = express();
 router.get('/projects/', async (req, res) => {
 	try {
 		const projects = await projectsDb.findProjects();
-		res.json(projects);
+		const project = projects.map((item) => {
+			return {
+				...item,
+				completed: Boolean(item.completed)
+			};
+		});
+		res.json(project);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
@@ -23,7 +29,13 @@ router.post('/projects/', async (req, res) => {
 router.get('/resources', async (req, res) => {
 	try {
 		const resources = await projectsDb.findResources();
-		res.json(resources);
+		const resource = resources.map((item) => {
+			return {
+				...item,
+				completed: Boolean(item.completed)
+			};
+		});
+		res.json(resource);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
@@ -48,7 +60,13 @@ router.post('/projects/:id/resources', async (req, res) => {
 router.get('/tasks', async (req, res) => {
 	try {
 		const Tasks = await projectsDb.findTasks();
-		res.json(Tasks);
+		const task = Tasks.map((item) => {
+			return {
+				...item,
+				completed: Boolean(item.completed)
+			};
+		});
+		res.json(task);
 	} catch (err) {
 		res.status(500).json({ err: 'server error' });
 	}
@@ -66,7 +84,5 @@ router.post('/projects/:id/tasks', async (req, res) => {
 		res.status(500).json({ err: 'server error' });
 	}
 });
-
-
 
 module.exports = router;

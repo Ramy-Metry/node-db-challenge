@@ -14,7 +14,7 @@ async function addTask(Task) {
 }
 
 async function findProjects() {
-	return await db('Projects as p').select('p.*');
+	return await db('Projects as p').select('p.id', 'p.name', 'p.description', 'p.completed');
 }
 
 function findResources() {
